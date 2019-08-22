@@ -1,8 +1,10 @@
 const express = require("express");
+const db = require("../data/dbConfig.js");
+
 const router = express.Router();
 
 // get all accounts
-router.get("/", (req, res) => {});
+router.get("/", async (req, res) => {});
 
 // get account by id
 router.get("/:id", (req, res) => {});
