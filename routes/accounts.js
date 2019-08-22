@@ -69,7 +69,22 @@ router.get("/:id", validateAccountId, (req, res) => {
 });
 
 // create account
-router.post("/", (req, res) => {});
+router.post("/", validateAccount, async (req, res) => {
+  const { name, budget } = req.body;
+
+  try {
+    const [id] = await db.from("accounts").insert({ name, budget });
+
+    res.json({
+      createdId: id
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "internal server error",
+      message: error.message
+    });
+  }
+});
 
 // update account by ID
 router.put("/:id", (req, res) => {});
