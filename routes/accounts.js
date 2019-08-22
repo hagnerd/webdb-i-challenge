@@ -47,7 +47,13 @@ router.get("/", async (_req, res) => {
 });
 
 // get account by id
-router.get("/:id", (req, res) => {});
+router.get("/:id", validateAccountId, (req, res) => {
+  const { account } = req;
+
+  res.json({
+    account
+  });
+});
 
 // create account
 router.post("/", (req, res) => {});
