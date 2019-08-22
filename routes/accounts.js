@@ -75,7 +75,7 @@ router.post("/", validateAccount, async (req, res) => {
   try {
     const [id] = await db.from("accounts").insert({ name, budget });
 
-    res.json({
+    res.status(201).json({
       createdId: id
     });
   } catch (error) {
@@ -87,7 +87,25 @@ router.post("/", validateAccount, async (req, res) => {
 });
 
 // update account by ID
-router.put("/:id", (req, res) => {});
+router.put("/:id", [validateAccountId, validateAccount], async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db
+      .from("accounts")
+      .where({ id })
+      .update(req.body);
+
+    res.json({
+      message: "successfully updated account with id " + id
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "internal server error",
+      message: error.message
+    });
+  }
+});
 
 // delete account by id
 router.delete("/:id", (req, res) => {});
