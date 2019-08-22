@@ -30,6 +30,19 @@ async function validateAccountId(req, res, next) {
   }
 }
 
+function validateAccount(req, res, next) {
+  const { name, budget } = req.body;
+
+  if (!name || !budget) {
+    res.status(400).json({
+      message: "Please provide name and budget"
+    });
+    return;
+  }
+
+  next();
+}
+
 // get all accounts
 router.get("/", async (_req, res) => {
   try {
