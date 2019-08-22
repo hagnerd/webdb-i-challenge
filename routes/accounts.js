@@ -91,10 +91,18 @@ router.put("/:id", [validateAccountId, validateAccount], async (req, res) => {
   const { id } = req.params;
 
   try {
-    await db
+    const updatedCount = await db
       .from("accounts")
       .where({ id })
       .update(req.body);
+
+    if (updatedCount === 0) {
+      res.status(500).json({
+        message: "update failed"
+      });
+
+      return;
+    }
 
     res.json({
       message: "successfully updated account with id " + id
@@ -108,6 +116,31 @@ router.put("/:id", [validateAccountId, validateAccount], async (req, res) => {
 });
 
 // delete account by id
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", validateAccountId, async (req, res) => {
+  const { account } = req;
+
+  try {
+    const deletedCount = await db
+      .from("accounts")
+      .where({ id: account.id })
+      .delete();
+
+    if (deletedCount === 0) {
+      res.status(500).json({
+        message: "Deletion failed"
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: `succesfully deleted account with id ${account.id}`
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "internal server error",
+      message: error.message
+    });
+  }
+});
 
 module.exports = router;
