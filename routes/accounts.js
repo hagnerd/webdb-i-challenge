@@ -3,6 +3,33 @@ const db = require("../data/dbConfig.js");
 
 const router = express.Router();
 
+async function validateAccountId(req, res, next) {
+  const { id } = req.params;
+
+  try {
+    const [account] = await db
+      .select("*")
+      .from("accounts")
+      .where({ id });
+
+    if (account === undefined) {
+      res.status(404).json({
+        message: "invalid account id"
+      });
+
+      return;
+    }
+
+    req.account = account;
+    next();
+  } catch (error) {
+    res.status(500).json({
+      error: "internal server error",
+      message: error.message
+    });
+  }
+}
+
 // get all accounts
 router.get("/", async (_req, res) => {
   try {
